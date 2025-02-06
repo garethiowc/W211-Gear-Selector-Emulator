@@ -4,7 +4,7 @@
 
 This project was born out of necessity when I converted my **2005 Mercedes w211 E320** from an automatic gearbox to a manual one. After removing the original CAN bus gear selector, I encountered two major issues:
 - **No Start:** Without the original gear selector communicating with the car's systems, the vehicle wouldn’t start.
-- **Missing Functions:** Even when the car was running, the reverse lights and parking sensors—both activated via the CAN bus network could not be activated.
+- **Missing Functions:** With the car was running, the reverse lights and parking sensors could not be activated.
 
 ## Overview
 
