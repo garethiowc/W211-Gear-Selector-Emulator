@@ -1,63 +1,71 @@
 # W211-Gear-Selector-Emulator
 
-Arduino Gear Selector with CAN Bus Communication
-Background
-This project was born out of necessity when I converted my 2005 Mercedes w211 E320 from an automatic gearbox to a manual one. After removing the original CAN bus gear selector, I encountered two major issues:
+## Background
 
-No Start: Without the original gear selector communicating with the car's systems, the vehicle wouldn’t start.
-Missing Functions: Even when the car was running, the reverse lights and parking sensors—both activated via the CAN bus network—failed to engage.
-Fortunately, I was still able to receive handbrake CAN bus messages, which simplified the challenge. By wiring in a reverse switch directly on the gearbox and using these messages, I was able to restore proper gear indication, ensuring that the reverse lights and parking sensors functioned as intended. This project not only brings back essential functionality to my Mercedes but also serves as a practical example of integrating modern electronics with classic vehicle modifications.
+This project was born out of necessity when I converted my **2005 Mercedes w211 E320** from an automatic gearbox to a manual one. After removing the original CAN bus gear selector, I encountered two major issues:
+- **No Start:** Without the original gear selector communicating with the car's systems, the vehicle wouldn’t start.
+- **Missing Functions:** Even when the car was running, the reverse lights and parking sensors—both activated via the CAN bus network could not be activated.
 
-Overview
-CAN Bus Communication:
-The program uses the [MCP_CAN library](https://github.com/coryjfowler/MCP_CAN_lib) to initialize and communicate over the CAN bus at 500 kbps.
+## Overview
 
-Gear Priority Logic:
-The code selects the gear based on the following rules:
+- **CAN Bus Communication:**  
+  The program uses the [MCP_CAN library](https://github.com/coryjfowler/MCP_CAN_lib) to initialize and communicate over the CAN bus at 500 kbps.
 
-Reverse: When the reverse switch (connected to pin 8) is pressed.
-Drive: When the handbrake is disengaged (handbrake signal received via CAN indicates it’s off).
-Park: Defaults to Park when neither of the above conditions is met.
-LED Indicator:
-The onboard LED (pin 13) reflects the gear state:
+- **Gear Priority Logic:**  
+  The code selects the gear based on the following rules:
+  - **Reverse:** When the reverse switch (connected to pin 8) is pressed.
+  - **Drive:** When the handbrake is disengaged (handbrake signal received via CAN indicates it’s off).
+  - **Park:** When the handbrake is engaged (handbrake signal received via CAN indicates it’s on).
 
-Park: LED stays solid ON.
-Drive: LED remains OFF.
-Reverse: LED pulses (toggled every 500 ms).
-Serial Debugging:
-The program prints messages to the Serial Monitor (at 115200 baud) whenever the gear or handbrake state changes.
+- **LED Indicator:**  
+  The onboard LED (pin 13) reflects the gear state:
+  - **Park:** LED stays solid **ON**.
+  - **Drive:** LED remains **OFF**.
+  - **Reverse:** LED pulses (toggled every 500 ms).
 
-Hardware Setup
-CANBus Board:
+- **Serial Debugging:**  
+  The program prints messages to the Serial Monitor (at 115200 baud) whenever the gear or handbrake state changes.
 
-Connected via SPI.
-Chip Select (CS) Pin: GPIO 17.
-Reverse Switch:
+## Hardware Setup
 
-Connected to digital pin 8.
-Configured with an internal pull-up resistor.
-Onboard LED:
+- **CANBus Board:**  
+  - Connected via SPI.
+  - **Chip Select (CS) Pin:** GPIO 17.
 
-Connected to digital pin 13 (default LED pin on many Arduino boards).
-Software Details
-Libraries
-SPI.h: Standard library for SPI communication.
-mcp_canbus.h: Library to interface with the MCP CAN bus controller.
-Global Variables and Timing
-CAN Message Intervals:
+- **Reverse Switch:**  
+  - Connected to digital pin 8.
+  - Configured with an internal pull-up resistor.
 
-Gear messages are sent every 10 ms.
-Handbrake status is checked every 20 ms.
-State Variables:
+- **Onboard LED:**  
+  - Connected to digital pin 13 (default LED pin on many Arduino boards).
 
-handbrakeOn & lastHandbrakeState: Track the current and previous handbrake status.
-lastGearSent: Remembers the last gear sent over CAN to avoid redundant messages.
-LED pulsing variables manage the toggling for the Reverse gear.
-Code Walkthrough
-1. Setup
-The setup() function initializes the Serial communication, configures the input/output pins, and sets up the CAN bus:
+## Software Details
 
-`void setup() {
+### Libraries
+
+- **SPI.h:** Standard library for SPI communication.
+- **mcp_canbus.h:** Library to interface with the MCP CAN bus controller.
+
+### Global Variables and Timing
+
+- **CAN Message Intervals:**
+  - Gear messages are sent every 10 ms.
+  - Handbrake status is checked every 20 ms.
+
+- **State Variables:**
+  - `handbrakeOn` & `lastHandbrakeState`: Track the current and previous handbrake status.
+  - `lastGearSent`: Remembers the last gear sent over CAN to avoid redundant messages.
+  - LED pulsing variables manage the toggling for the Reverse gear.
+
+### Code Walkthrough
+
+#### 1. Setup
+
+The `setup()` function initializes the Serial communication, configures the input/output pins, and sets up the CAN bus:
+
+
+```cpp
+void setup() {
     Serial.begin(115200);
     if (!Serial) {
         delay(1000); // Allow time for the Serial port to initialize
@@ -83,9 +91,9 @@ The setup() function initializes the Serial communication, configures the input/
     // Additional filters are commented out but can be enabled if needed:
     // CAN.init_Filt(1, 0, 0x240);
     // ...
-}`
-
-2. Main Loop
+}
+```
+#### 2. Main Loop
 The loop() function is responsible for:
 
 * Periodically checking for new CAN messages to update the handbrake status.
@@ -93,7 +101,8 @@ The loop() function is responsible for:
 * Sending the corresponding gear command over the CAN bus.
 * Updating the LED indicator accordingly.
 
-`void loop() {
+```ccp
+ void loop() {
     unsigned long currentTime = millis();
 
     // Check handbrake status every 20 ms
@@ -121,11 +130,13 @@ The loop() function is responsible for:
     // Update the LED based on the current gear
     updateLED(currentGear);
 }`
+```
 
-3. Sending Gear Commands
+#### 3. Sending Gear Commands
 The sendGear() function sends a CAN message with the gear information every 10 ms and prints to Serial only if the gear changes:
 
-`void sendGear(unsigned char gear, const char* gearName) {
+```ccp
+ void sendGear(unsigned char gear, const char* gearName) {
     unsigned long currentTime = millis();
 
     if (currentTime - lastGearTime >= interval10ms) {
@@ -142,11 +153,13 @@ The sendGear() function sends a CAN message with the gear information every 10 m
         lastGearTime = currentTime;
     }
 }`
+```
 
-4. Handling Handbrake Status
+#### 4. Handling Handbrake Status
 The handleHandbrake() function checks for incoming CAN messages (expected to be with ID 0x240) and updates the handbrake state:
 
-`void handleHandbrake() {
+```ccp
+ void handleHandbrake() {
     unsigned char len = 0;
     unsigned char buf[8];
 
@@ -168,8 +181,9 @@ The handleHandbrake() function checks for incoming CAN messages (expected to be 
         }
     }
 }`
+```
 
-5. LED Indicator Update
+#### 5. LED Indicator Update
 The updateLED() function sets the LED state based on the gear:
 
 * Park (0x08): LED is solid ON.
