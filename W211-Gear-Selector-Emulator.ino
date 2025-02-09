@@ -54,7 +54,7 @@ void setup() {
     CAN.init_Mask(1, 0, 0x7FF);
 
     // -----------------------------------------------------
-    // 2) Configure all 6 filters to accept only 0x240
+    // 2) Configure filters to accept only required ID's 0x240
     // -----------------------------------------------------
     // "0" for standard frame, "0x240" is your exact ID
     CAN.init_Filt(0, 0, 0x240);
