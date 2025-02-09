@@ -60,9 +60,7 @@ void setup() {
     CAN.init_Filt(0, 0, 0x240);
     //CAN.init_Filt(1, 0, 0x240);
     //CAN.init_Filt(2, 0, 0x240);
-    //CAN.init_Filt(3, 0, 0x240);
-    //CAN.init_Filt(4, 0, 0x240);
-    //CAN.init_Filt(5, 0, 0x240);
+=
 }
 
 void loop() {
