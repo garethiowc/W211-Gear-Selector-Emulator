@@ -49,19 +49,16 @@ void setup() {
     // -----------------------------------------------------
     // 1) Configure masks (we use 0x7FF so that we care about all bits)
     // -----------------------------------------------------
-    // "0" for standard frames, "0x7FF" is the "match all bits" mask
     CAN.init_Mask(0, 0, 0x7FF);
     CAN.init_Mask(1, 0, 0x7FF);
 
     // -----------------------------------------------------
     // 2) Configure filters to accept only required ID's 0x240
     // -----------------------------------------------------
-    // "0" for standard frame, "0x240" is your exact ID
     CAN.init_Filt(0, 0, 0x240);
     //CAN.init_Filt(1, 0, 0x240);
     //CAN.init_Filt(2, 0, 0x240);
-=
-}
+    }
 
 void loop() {
     unsigned long currentTime = millis();
@@ -92,7 +89,7 @@ void loop() {
 void sendGear(unsigned char gear, const char* gearName) {
     unsigned long currentTime = millis();
 
-    // Send the CAN message every 10ms
+	// Send the CAN message every 10ms (Match the ECU's expected rate)
     if (currentTime - lastGearTime >= interval10ms) {
         unsigned char data[1] = {gear};
         CAN.sendMsgBuf(0x230, 0, 1, data);

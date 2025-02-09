@@ -8,8 +8,8 @@ This project was born out of necessity when I converted my **2005 Mercedes w211 
 
 ## Overview
 
-- **CAN Bus Communication:**  
-  The program uses the [MCP_CAN library](https://github.com/coryjfowler/MCP_CAN_lib) to initialize and communicate over the CAN bus at 500 kbps.
+- **Require Library:**  
+  The program uses the [Longan_CAN_MCP2515](https://github.com/Longan-Labs/Longan_CAN_MCP2515).
 
 - **Gear Priority Logic:**  
   The code selects the gear based on the following rules:
@@ -28,9 +28,10 @@ This project was born out of necessity when I converted my **2005 Mercedes w211 
 
 ## Hardware Setup
 
-- **CANBus Board:**  
-  - Connected via SPI.
-  - **Chip Select (CS) Pin:** GPIO 17.
+- **Main Baord:**  
+  - [Loganlabs CanBed V1.](https://docs.longan-labs.cc/1030008/)
+
+  ![Main Board](https://www.longan-labs.cc/media/wysiwyg/CAN-Bus/CANBed/Details_of_CANBed-01.png)
 
 - **Reverse Switch:**  
   - Connected to digital pin 8.
@@ -50,7 +51,7 @@ This project was born out of necessity when I converted my **2005 Mercedes w211 
 
 - **CAN Message Intervals:**
   - Gear messages are sent every 10 ms.
-  - Handbrake status is checked every 20 ms.
+    - Handbrake status is checked every 20 ms.
 
 - **State Variables:**
   - `handbrakeOn` & `lastHandbrakeState`: Track the current and previous handbrake status.
